@@ -1,4 +1,4 @@
-# a posix-compliant implementation of arrays in 18 lines of shell.
+# a posix-compliant implementation of arrays in shell
 Uses \n as delimiter, do not mess with it.
 
 # usage
