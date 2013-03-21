@@ -1,0 +1,18 @@
+#!/bin/sh
+array(){
+  while [ ! $#  -eq 0 ]; do
+    echo "$1" && shift
+  done
+}
+array_len(){
+  wc -l
+}
+array_nth(){
+  local A=0 
+  while IFS= read line ; do
+    if [ "$A" -eq "$1" ]; then
+      echo -n "$line" && return 0
+    fi
+    A=$(expr $A + 1)
+  done && return 1
+}
