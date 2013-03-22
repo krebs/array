@@ -33,7 +33,7 @@ $ echo $?
 
 # Iterate over the array
 $ echo "$A" | while IFS= read element; do echo "$element, "; done
-bob,
+ bob,
 ross,
 ,
 khan,
