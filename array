@@ -12,6 +12,9 @@ array () {
 
 ##
 # Get length of array
+# 
+# Pipe your array in:
+#   echo "$ary" | array_len
 array_len () {
   wc -l
 }
@@ -20,10 +23,11 @@ array_len () {
 # Element accessor
 #
 # Uses first argument as (zero-based) index. Returns 1 on errors.
+#
+# Pipe your array in:
+#   echo "$ary" | array_nth $index
 array_nth () {
-  # `local` is not POSIX-compliant (yet), but should run just
-  # fine almost everywhere
-  local A=0
+  A=0
   while IFS= read element; do
     if [ "$A" -eq "$1" ]; then
       printf "$element" && return 0
