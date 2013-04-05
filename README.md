@@ -31,6 +31,9 @@ $ echo "$A" | array_nth -1
 $ echo $?
 1
 
+# Append item to array
+A=$(array "$A" 'lolwut')
+
 # Iterate over the array
 $ echo "$A" | while IFS= read element; do echo "$element, "; done
  bob,
