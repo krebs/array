@@ -1,12 +1,12 @@
-#!/bin/sh
+#! /bin/sh
 
 ##
 # Array constructor
 #
 # Eats up all arguments and returns a newline-separated string
 array () {
-  while [ ! $#  -eq 0 ]; do
-    echo "$1" && shift
+  for i; do
+    echo "$i"
   done
 }
 
@@ -22,16 +22,15 @@ array_len () {
 ##
 # Element accessor
 #
-# Uses first argument as (zero-based) index. Returns 1 on errors.
+# Uses first argument as (zero-based) index.
+#
+# Exit status:
+#    0  Success.
+#    1  Index is out of range.
+#   >1  First argument is not an integer expression.
 #
 # Pipe your array in:
 #   echo "$ary" | array_nth $index
 array_nth () {
-  A=0
-  while IFS= read element; do
-    if [ "$A" -eq "$1" ]; then
-      printf "$element" && return 0
-    fi
-    A=$(expr $A + 1)
-  done && return 1
+  test "$1" -ge 0 && sed -n $(expr $1 + 1)p | grep .
 }
