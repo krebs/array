@@ -1,0 +1,37 @@
+#! /bin/sh
+
+# Test suite for array
+
+set -e
+
+. "$(pwd)/array"
+
+# test array_indexof
+
+A=$(array ' bob' 'ross' '' 'khan' 'ross' '/\#$^' 'ro')
+
+idx=$(echo "$A" | array_indexof khan)
+[ $idx -eq 3 ] || (>&2 echo "Index of khan: expected 3, got $idx" && exit 1)
+
+if echo "$A" | array_indexof "tim" > /dev/null 2>&1 ; then
+  set +e
+  idx="$(echo "$A" | array_indexof tim)"
+  set -e
+
+  (>&2 echo "Index of tim: expected -1, got $idx" && exit 1)
+fi
+
+idx=$(echo "$A" | array_indexof "")
+[ $idx -eq 2 ] || (>&2 echo "Index of : expected 2, got $idx" && exit 1)
+
+idx=$(echo "$A" | array_indexof ross)
+[ $idx -eq 1 ] || (>&2 echo "Index of ross: expected 1, got $idx" && exit 1)
+
+idx=$(echo "$A" | array_indexof "/\#$^")
+[ $idx -eq 5 ] || (>&2 echo "Index of /\#$^: expected 5, got $idx" && exit 1)
+
+idx=$(echo "$A" | array_indexof ro)
+[ $idx -eq 6 ] || (>&2 echo "Index of ro: expected 6, got $idx" && exit 1)
+
+echo "Tests successful"
+

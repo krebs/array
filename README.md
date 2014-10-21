@@ -1,6 +1,6 @@
 # POSIX-compliant implementation of arrays in shell
 
-It is zero-based and uses "\n" as delimiter, do not mess with it (unless you know what you're doing, which you're probably not ;) ).
+It is zero-based and uses "\n" as delimiter, do not mess with it (unless you know what you're doing, which you probably don't ;) ).
 If you have suggestions for improvements feel free to send a pull request.
 
 # Usage
@@ -40,4 +40,8 @@ $ echo "$A" | while IFS= read element; do echo "$element, "; done
 ross,
 ,
 khan,
+
+# Get the index of the element khan
+$ echo "$A" | array_indexof khan
+3%
 ```
