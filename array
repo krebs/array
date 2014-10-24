@@ -12,7 +12,7 @@ array () {
 
 ##
 # Get length of array
-# 
+#
 # Pipe your array in:
 #   echo "$ary" | array_len
 array_len () {
@@ -34,3 +34,17 @@ array_len () {
 array_nth () {
   test "$1" -ge 0 && sed -n $(expr $1 + 1)p | grep .
 }
+
+##
+# Get the first index of an element
+#
+# Exit status:
+#    0  Success.
+#  >=1  Element not found
+#
+# Pipe your array in:
+#   echo "$ary" | array_indexof $element
+array_indexof() {
+  expr -1 + $(sed -n "/^$(echo "$1" | sed -e 's/[]\/$*.^|[]/\\&/g')$/=" | head -n 1 | grep .) 2> /dev/null
+}
+
