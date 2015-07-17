@@ -45,3 +45,7 @@ khan,
 $ echo "$A" | array_indexof khan
 3%
 ```
+
+# Notes
+This is a PoC that arrays 'can' be implemented in posix shell, nothing more, nothing less.
+If you want full-fledged data structures in your shell i suggest you either rewrite your script in a more powerful scripting language or you use [jq](http://stedolan.github.io/jq/) which lets you work with json in your shell.
