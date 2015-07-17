@@ -39,12 +39,13 @@ array_nth () {
 # Get the first index of an element
 #
 # Exit status:
-#    0  Success.
-#  >=1  Element not found
+#   0  Success.
+#  >1  Element not found
 #
 # Pipe your array in:
 #   echo "$ary" | array_indexof $element
 array_indexof() {
-  expr -1 + $(sed -n "/^$(echo "$1" | sed -e 's/[]\/$*.^|[]/\\&/g')$/=" | head -n 1 | grep .) 2> /dev/null
+  i=$((-1 + $(sed -n "/^$(echo "$1" | sed -e 's/[]\/$*.^|[]/\\&/g')$/=" | head -n 1 | grep .)))
+  echo $i
 }
 
