@@ -36,10 +36,44 @@ idx=$(echo "$A" | array_indexof ro)
 idx=$(echo "$A" | array_indexof " bob")
 [ $idx -eq 0 ] || (>&2 echo "Index of : expected 0, got $idx" && exit 1)
 
+# test array_nth
+
+A=$(array ' bob' 'ross' '' 'khan' 'ross' '/\#$^' 'ro')
+
 if ! (val=$(echo "$A" | array_nth 2) && [ "$val" = "" ]); then
   echo "array_nth that should return the empty string, didn't." >&2
   exit 1
 fi
+
+# test array_element_encode, array_element_decode
+
+E='look
+ma
+three lines and a %'
+expect_encoded_E='look%0Ama%0Athree lines and a %25'
+really_encoded_E=$(echo "$E" | array_element_encode)
+
+if [ "$expect_encoded_E" != "$really_encoded_E" ]; then
+  echo "array_element_encode doesn't do the right thing" >&2
+  echo "  wanted: $expect_encoded_E" >&2
+  echo " but got: $really_encoded_E" >&2
+  exit 1
+fi
+
+really_decoded_E=$(echo "$really_encoded_E" | array_element_decode)
+if [ "$E" != "$really_decoded_E" ]; then
+  echo "array_element_decode doesn't do the right thing" >&2
+  echo "  wanted: $E" >&2
+  echo " but got: $really_decoded_E" >&2
+  exit 1
+fi
+
+A1=$(array "$E")
+if [ "$(echo "$A1" | array_nth 0)" != "$E" ]; then
+  echo "array_nth cannot handle encoded elements" >&2
+  exit 1
+fi
+
 
 echo "Tests successful"
 

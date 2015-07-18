@@ -1,12 +1,17 @@
 #! /bin/sh
 
 ##
+# Definitions:
+# - An array is a newline separated list of array elements.
+# - An array element is an `array_element_encode`d string.
+
+##
 # Array constructor
 #
-# Eats up all arguments and returns a newline-separated string
+# Turn arguments into an array.
 array () {
   for i; do
-    echo "$i"
+    echo "$i" | array_element_encode
   done
 }
 
@@ -36,7 +41,8 @@ array_nth () {
         BEGIN { code=1 }
         NR == i + 1 { print $0; code=0 }
         END { exit code }
-      '
+      ' \
+    | array_element_decode
 }
 
 ##
@@ -49,7 +55,30 @@ array_nth () {
 # Pipe your array in:
 #   echo "$ary" | array_indexof $element
 array_indexof() {
-  i=$((-1 + $(sed -n "/^$(echo "$1" | sed -e 's/[]\/$*.^|[]/\\&/g')$/=" | head -n 1 | grep .)))
+  i=$((-1 + $(sed -n "/^$(echo "$1" | array_element_encode | sed -e 's/[]\/$*.^|[]/\\&/g')$/=" | head -n 1 | grep .)))
   echo $i
 }
 
+##
+# Turn stdin into an array element.
+#
+# This is similar to urlencode but only for % and \n (and not \0).
+#
+array_element_encode() {
+  sed '
+    s/%/%25/g
+  ' |
+  sed '
+    :a; $!N; s/\n/%0A/; ta
+  '
+}
+
+##
+# Inverse function of array_element_encode.
+#
+array_element_decode() {
+  sed '
+    s/%0A/\n/gi
+    s/%25/%/gi
+  '
+}
