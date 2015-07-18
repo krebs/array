@@ -36,6 +36,10 @@ idx=$(echo "$A" | array_indexof ro)
 idx=$(echo "$A" | array_indexof " bob")
 [ $idx -eq 0 ] || (>&2 echo "Index of : expected 0, got $idx" && exit 1)
 
+# test array_nth
+
+A=$(array ' bob' 'ross' '' 'khan' 'ross' '/\#$^' 'ro')
+
 if ! (val=$(echo "$A" | array_nth 2) && [ "$val" = "" ]); then
   echo "array_nth that should return the empty string, didn't." >&2
   exit 1
