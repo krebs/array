@@ -47,11 +47,13 @@ fi
 
 # test array_element_encode, array_element_decode
 
-E=$(printf 'look\nma\nthree lines and a %%')
+E='look
+ma
+three lines and a %'
 expect_encoded_E='look%0Ama%0Athree lines and a %25'
-really_encoded_E=$(printf '%s' "$E" | array_element_encode)
+really_encoded_E=$(echo "$E" | array_element_encode)
 
-if ! [ "$expect_encoded_E" = "$really_encoded_E" ]; then
+if [ "$expect_encoded_E" != "$really_encoded_E" ]; then
   echo "array_element_encode doesn't do the right thing" >&2
   echo "  wanted: $expect_encoded_E" >&2
   echo " but got: $really_encoded_E" >&2
@@ -59,7 +61,7 @@ if ! [ "$expect_encoded_E" = "$really_encoded_E" ]; then
 fi
 
 really_decoded_E=$(echo "$really_encoded_E" | array_element_decode)
-if ! [ "$E" = "$really_decoded_E" ]; then
+if [ "$E" != "$really_decoded_E" ]; then
   echo "array_element_decode doesn't do the right thing" >&2
   echo "  wanted: $E" >&2
   echo " but got: $really_decoded_E" >&2
