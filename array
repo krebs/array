@@ -26,13 +26,17 @@ array_len () {
 #
 # Exit status:
 #    0  Success.
-#    1  Index is out of range.
-#   >1  First argument is not an integer expression.
+#   >0  An error occurred.
 #
 # Pipe your array in:
 #   echo "$ary" | array_nth $index
 array_nth () {
-  test "$1" -ge 0 && sed -n $(expr $1 + 1)p | grep .
+  printf '%d' "$1" >/dev/null 2>&1 \
+    && awk -v i=$1 '
+        BEGIN { code=1 }
+        NR == i + 1 { print $0; code=0 }
+        END { exit code }
+      '
 }
 
 ##
