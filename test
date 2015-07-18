@@ -45,5 +45,33 @@ if ! (val=$(echo "$A" | array_nth 2) && [ "$val" = "" ]); then
   exit 1
 fi
 
+# test array_element_encode, array_element_decode
+
+E=$(printf 'look\nma\nthree lines and a %%')
+expect_encoded_E='look%0Ama%0Athree lines and a %25'
+really_encoded_E=$(printf '%s' "$E" | array_element_encode)
+
+if ! [ "$expect_encoded_E" = "$really_encoded_E" ]; then
+  echo "array_element_encode doesn't do the right thing" >&2
+  echo "  wanted: $expect_encoded_E" >&2
+  echo " but got: $really_encoded_E" >&2
+  exit 1
+fi
+
+really_decoded_E=$(echo "$really_encoded_E" | array_element_decode)
+if ! [ "$E" = "$really_decoded_E" ]; then
+  echo "array_element_decode doesn't do the right thing" >&2
+  echo "  wanted: $E" >&2
+  echo " but got: $really_decoded_E" >&2
+  exit 1
+fi
+
+A1=$(array "$E")
+if [ "$(echo "$A1" | array_nth 0)" != "$E" ]; then
+  echo "array_nth cannot handle encoded elements" >&2
+  exit 1
+fi
+
+
 echo "Tests successful"
 
