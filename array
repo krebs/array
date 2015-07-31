@@ -46,17 +46,20 @@ array_nth () {
 }
 
 ##
-# Get the first index of an element
+# Get the first (zero-based) index of an element.
 #
 # Exit status:
-#   0  Success.
-#  >1  Element not found
+#    0  Success.
+#   >0  An error occurred (element not in array).
 #
 # Pipe your array in:
-#   echo "$ary" | array_indexof $element
-array_indexof() {
-  i=$((-1 + $(sed -n "/^$(echo "$1" | array_element_encode | sed -e 's/[]\/$*.^|[]/\\&/g')$/=" | head -n 1 | grep .)))
-  echo $i
+#   echo "$ary" | array_indexof "$element"
+array_indexof () {
+  e="$(echo "$1" | array_element_encode)" awk '
+    BEGIN { e=ENVIRON["e"] ; i = -1 ; code = 1 }
+    i < 0 && e == $0 { i = NR - 1 ; print i ; code = 0 }
+    END { exit code }
+  '
 }
 
 ##

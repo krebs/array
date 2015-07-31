@@ -10,31 +10,40 @@ set -e
 
 A=$(array ' bob' 'ross' '' 'khan' 'ross' '/\#$^' 'ro')
 
-idx=$(echo "$A" | array_indexof khan)
-[ $idx -eq 3 ] || (>&2 echo "Index of khan: expected 3, got $idx" && exit 1)
-
-if echo "$A" | array_indexof "tim" > /dev/null 2>&1 ; then
-  set +e
-  idx="$(echo "$A" | array_indexof tim)"
-  set -e
-
-  (>&2 echo "Index of tim: expected -1, got $idx" && exit 1)
+if ! (idx=$(echo "$A" | array_indexof khan)) && [ "$idx" -eq 3 ]; then
+  echo "Index of khan, expected 3, got $idx" >&2
+  exit 1
 fi
 
-idx=$(echo "$A" | array_indexof "")
-[ $idx -eq 2 ] || (>&2 echo "Index of : expected 2, got $idx" && exit 1)
+if idx=$(echo "$A" | array_indexof "tim") ; then
+  echo "Index of tim should fail, got $idx" >&2
+  exit 1
+fi
 
-idx=$(echo "$A" | array_indexof ross)
-[ $idx -eq 1 ] || (>&2 echo "Index of ross: expected 1, got $idx" && exit 1)
+if ! (idx=$(echo "$A" | array_indexof "") && [ "$idx" -eq 2 ]); then
+  echo "Index of : expected 2, got $idx" >&2
+  exit 1
+fi
 
-idx=$(echo "$A" | array_indexof "/\#$^")
-[ $idx -eq 5 ] || (>&2 echo "Index of /\#$^: expected 5, got $idx" && exit 1)
+if ! (idx=$(echo "$A" | array_indexof ross) && [ "$idx" -eq 1 ]); then
+  echo "Index of ross: expected 1, got $idx" >&2
+  exit 1
+fi
 
-idx=$(echo "$A" | array_indexof ro)
-[ $idx -eq 6 ] || (>&2 echo "Index of ro: expected 6, got $idx" && exit 1)
+if ! (idx=$(echo "$A" | array_indexof "/\#$^") && [ "$idx" -eq 5 ]); then
+  echo "Index of /\#$^: expected 5, got $idx" >&2
+  exit 1
+fi
 
-idx=$(echo "$A" | array_indexof " bob")
-[ $idx -eq 0 ] || (>&2 echo "Index of : expected 0, got $idx" && exit 1)
+if ! (idx=$(echo "$A" | array_indexof ro) && [ "$idx" -eq 6 ]); then
+  echo "Index of ro: expected 6, got $idx" >&2
+  exit 1
+fi
+
+if ! (idx=$(echo "$A" | array_indexof " bob") && [ "$idx" -eq 0 ]); then
+  echo "Index of  bob: expected 0, got $idx" >&2
+  exit 1
+fi
 
 # test array_nth
 
@@ -71,6 +80,11 @@ fi
 A1=$(array "$E")
 if [ "$(echo "$A1" | array_nth 0)" != "$E" ]; then
   echo "array_nth cannot handle encoded elements" >&2
+  exit 1
+fi
+
+if [ "$(echo "$A1" | array_indexof "$E")" -ne 0 ]; then
+  echo "array_indexof cannot handle encoded elements" >&2
   exit 1
 fi
 
