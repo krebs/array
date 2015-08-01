@@ -68,20 +68,13 @@ array_indexof () {
 # This is similar to urlencode but only for % and \n (and not \0).
 #
 array_element_encode() {
-  sed '
-    s/%/%25/g
-  ' |
-  sed '
-    :a; $!N; s/\n/%0A/; ta
-  '
+  sed 's/%/%25/g' | sed -e :a -e '$!N; s/\n/%0A/; ta'
 }
 
 ##
 # Inverse function of array_element_encode.
 #
 array_element_decode() {
-  sed '
-    s/%0A/\n/gi
-    s/%25/%/gi
-  '
+  sed -e 's/%0[aA]/\
+/g' -e 's/%25/%/g'
 }
