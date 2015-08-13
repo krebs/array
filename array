@@ -16,6 +16,19 @@ array () {
 }
 
 ##
+# Append items to an array
+#
+# Pass your array as the first argument:
+#   array_append "$A" 'next' 'another'
+array_append () {
+  echo "$1" && shift &&
+  for i; do
+    echo "$i" | array_element_encode
+  done
+}
+
+
+##
 # Get length of array
 #
 # Pipe your array in:

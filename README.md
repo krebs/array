@@ -31,7 +31,7 @@ $ echo $?
 1
 
 # Append item to array
-A=$(array "$A" 'lolwut')
+A=$(array_append "$A" 'lolwut')
 
 # Iterate over the array
 $ echo "$A" | while IFS= read element; do printf '%s, \n' "$(echo "$element" | array_element_decode)"; done

@@ -88,6 +88,19 @@ if [ "$(echo "$A1" | array_indexof "$E")" -ne 0 ]; then
   exit 1
 fi
 
+# test append
+
+A=$(array_append "$A" 'next')
+
+if ! (idx=$(echo "$A" | array_indexof "next") && [ "$idx" -eq 7 ]); then
+  echo "Index of next: expected 7, got $idx" >&2
+  exit 1
+fi
+
+if ! (idx=$(echo "$A" | array_indexof " bob") && [ "$idx" -eq 0 ]); then
+  echo "Index of  bob: expected 0, got $idx" >&2
+  exit 1
+fi
 
 echo "Tests successful"
 
