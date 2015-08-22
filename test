@@ -4,52 +4,59 @@
 
 set -e
 
-. "$(pwd)/array"
+. "`pwd`/array"
 
 # test array_indexof
 
-A=$(array ' bob' 'ross' '' 'khan' 'ross' '/\#$^' 'ro')
+A=`array ' bob' 'ross' '' 'khan' 'ross' '/\#$^' 'ro'`
 
-if ! (idx=$(echo "$A" | array_indexof khan)) && [ "$idx" -eq 3 ]; then
+idx=`echo "$A" | array_indexof khan` || { echo "Index of khan failed" >&2 ; exit 1; }
+if [ "$idx" -ne 3 ] ; then
   echo "Index of khan, expected 3, got $idx" >&2
   exit 1
 fi
 
-if idx=$(echo "$A" | array_indexof "tim") ; then
-  echo "Index of tim should fail, got $idx" >&2
+if echo "$A" | array_indexof "tim" > /dev/null 2>&1 ; then
+  echo "Index of tim should fail, got `echo "$A" | array_indexof "tim"`" >&2
   exit 1
 fi
 
-if ! (idx=$(echo "$A" | array_indexof "") && [ "$idx" -eq 2 ]); then
+idx=`echo "$A" | array_indexof ""` || { echo "Index of failed" >&2 ; exit 1; }
+if [ "$idx" -ne 2 ] ; then
   echo "Index of : expected 2, got $idx" >&2
   exit 1
 fi
 
-if ! (idx=$(echo "$A" | array_indexof ross) && [ "$idx" -eq 1 ]); then
+idx=`echo "$A" | array_indexof ross` || { echo "Index of ross failed" >&2 ; exit 1; }
+if [ "$idx" -ne 1 ] ; then
   echo "Index of ross: expected 1, got $idx" >&2
   exit 1
 fi
 
-if ! (idx=$(echo "$A" | array_indexof "/\#$^") && [ "$idx" -eq 5 ]); then
+idx=`echo "$A" | array_indexof '/\#$^'` || { echo "Index of /\#$^ failed" >&2 ; exit 1; }
+if [ "$idx" -ne 5 ] ; then
   echo "Index of /\#$^: expected 5, got $idx" >&2
   exit 1
 fi
 
-if ! (idx=$(echo "$A" | array_indexof ro) && [ "$idx" -eq 6 ]); then
+idx=`echo "$A" | array_indexof ro` || { echo "Index of ro failed" >&2 ; exit 1; }
+if [ "$idx" -ne 6 ] ; then
   echo "Index of ro: expected 6, got $idx" >&2
   exit 1
 fi
 
-if ! (idx=$(echo "$A" | array_indexof " bob") && [ "$idx" -eq 0 ]); then
+idx=`echo "$A" | array_indexof " bob"` || { echo "Index of  bob failed" >&2 ; exit 1; }
+if [ "$idx" -ne 0 ] ; then
   echo "Index of  bob: expected 0, got $idx" >&2
   exit 1
 fi
 
 # test array_nth
 
-A=$(array ' bob' 'ross' '' 'khan' 'ross' '/\#$^' 'ro')
+A=`array ' bob' 'ross' '' 'khan' 'ross' '/\#$^' 'ro'`
 
-if ! (val=$(echo "$A" | array_nth 2) && [ "$val" = "" ]); then
+val=`echo "$A" | array_nth 2` || { echo "array_nth 2 failed" >&2 ; exit 1; }
+if [ "$val" != "" ] ; then
   echo "array_nth that should return the empty string, didn't." >&2
   exit 1
 fi
@@ -60,7 +67,7 @@ E='look
 ma
 three lines and a %'
 expect_encoded_E='look%0Ama%0Athree lines and a %25'
-really_encoded_E=$(echo "$E" | array_element_encode)
+really_encoded_E=`echo "$E" | array_element_encode`
 
 if [ "$expect_encoded_E" != "$really_encoded_E" ]; then
   echo "array_element_encode doesn't do the right thing" >&2
@@ -69,7 +76,7 @@ if [ "$expect_encoded_E" != "$really_encoded_E" ]; then
   exit 1
 fi
 
-really_decoded_E=$(echo "$really_encoded_E" | array_element_decode)
+really_decoded_E=`echo "$really_encoded_E" | array_element_decode`
 if [ "$E" != "$really_decoded_E" ]; then
   echo "array_element_decode doesn't do the right thing" >&2
   echo "  wanted: $E" >&2
@@ -77,28 +84,38 @@ if [ "$E" != "$really_decoded_E" ]; then
   exit 1
 fi
 
-A1=$(array "$E")
-if [ "$(echo "$A1" | array_nth 0)" != "$E" ]; then
+A1=`array "$E"`
+if [ "`echo "$A1" | array_nth 0`" != "$E" ]; then
   echo "array_nth cannot handle encoded elements" >&2
   exit 1
 fi
 
-if [ "$(echo "$A1" | array_indexof "$E")" -ne 0 ]; then
+if [ "`echo "$A1" | array_indexof "$E"`" -ne 0 ]; then
   echo "array_indexof cannot handle encoded elements" >&2
   exit 1
 fi
 
-# test append
+# test array_append
 
-A=$(array_append "$A" 'next')
+A=`array_append "$A" 'next'`
 
-if ! (idx=$(echo "$A" | array_indexof "next") && [ "$idx" -eq 7 ]); then
+idx=`echo "$A" | array_indexof "next"` || { echo "Index of next failed" >&2 ; exit 1; }
+if [ "$idx" -ne 7 ] ; then
   echo "Index of next: expected 7, got $idx" >&2
   exit 1
 fi
 
-if ! (idx=$(echo "$A" | array_indexof " bob") && [ "$idx" -eq 0 ]); then
+idx=`echo "$A" | array_indexof " bob"` || { echo "Index of  bob failed" >&2 ; exit 1; }
+if [ "$idx" -ne 0 ] ; then
   echo "Index of  bob: expected 0, got $idx" >&2
+  exit 1
+fi
+
+# test array_len
+
+len=`echo "$A" | array_len` || { echo "array_len failed" >&2 ; exit 1; }
+if [ "$len" -ne 8 ] ; then
+  echo "array_len: expected 8, got $len" >&2
   exit 1
 fi
 

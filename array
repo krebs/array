@@ -1,5 +1,12 @@
 #! /bin/sh
 
+# must use nawk for solaris
+# http://cfajohnson.com/shell/cus-faq-2.html#Q24
+case `uname` in
+  SunOS) arrayawkcmd=nawk ;;
+  *) arrayawkcmd=awk ;;
+esac
+
 ##
 # Definitions:
 # - An array is a newline separated list of array elements.
@@ -10,7 +17,7 @@
 #
 # Turn arguments into an array.
 array () {
-  for i; do
+  for i in "$@" ; do
     echo "$i" | array_element_encode
   done
 }
@@ -22,7 +29,7 @@ array () {
 #   array_append "$A" 'next' 'another'
 array_append () {
   echo "$1" && shift &&
-  for i; do
+  for i in "$@" ; do
     echo "$i" | array_element_encode
   done
 }
@@ -50,7 +57,7 @@ array_len () {
 #   echo "$ary" | array_nth $index
 array_nth () {
   printf '%d' "$1" >/dev/null 2>&1 \
-    && awk -v i=$1 '
+    && "$arrayawkcmd" -v i="$1" '
         BEGIN { code=1 }
         NR == i + 1 { print $0; code=0 }
         END { exit code }
@@ -68,7 +75,7 @@ array_nth () {
 # Pipe your array in:
 #   echo "$ary" | array_indexof "$element"
 array_indexof () {
-  e="$(echo "$1" | array_element_encode)" awk '
+  e="`echo "$1" | array_element_encode`" "$arrayawkcmd" '
     BEGIN { e=ENVIRON["e"] ; i = -1 ; code = 1 }
     i < 0 && e == $0 { i = NR - 1 ; print i ; code = 0 }
     END { exit code }
@@ -91,3 +98,4 @@ array_element_decode() {
   sed -e 's/%0[aA]/\
 /g' -e 's/%25/%/g'
 }
+
