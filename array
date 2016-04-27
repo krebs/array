@@ -83,6 +83,23 @@ array_indexof () {
 }
 
 ##
+# Remove the first occurence of an element.
+#
+# Exit status:
+#    0  Success.
+#   >0  An error occurred (element not in array).
+#
+# Pipe your array in:
+#   echo "$ary" | array_remove "$element"
+array_remove () {
+  e="`echo "$1" | array_element_encode`" "$arrayawkcmd" '
+    BEGIN { e=ENVIRON["e"] ; i = -1 ; code = 1 }
+    { if (i < 0 && e == $0) { i = NR - 1 ; code = 0 } else { print $0 } }
+    END { exit code }
+  '
+}
+
+##
 # Turn stdin into an array element.
 #
 # This is similar to urlencode but only for % and \n (and not \0).

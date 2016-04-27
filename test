@@ -119,5 +119,29 @@ if [ "$len" -ne 8 ] ; then
   exit 1
 fi
 
+# test array_remove
+A=`echo "$A" | array_remove 'next'`
+
+if echo "$A" | array_indexof "next" > /dev/null 2>&1 ; then
+  echo "Index of next should fail, got `echo "$A" | array_indexof "next"`" >&2
+  exit 1
+fi
+
+A=`array 'first' 'second' 'third' 'first'`
+A=`echo "$A" | array_remove 'first'`
+
+idx=`echo "$A" | array_indexof "first"` || { echo "Index of failed" >&2 ; exit 1; }
+if [ "$idx" -ne 2 ] ; then
+  echo "Index of first: expected 2, got $idx" >&2
+  exit 1
+fi
+
+A=`echo "$A" | array_remove 'first'`
+
+if echo "$A" | array_indexof "first" > /dev/null 2>&1 ; then
+  echo "Index of first should fail, got `echo "$A" | array_indexof "first"`" >&2
+  exit 1
+fi
+
 echo "Tests successful"
 
