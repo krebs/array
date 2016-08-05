@@ -1,11 +1,20 @@
-language: C
+before_install:
+- sudo apt-get update -qq
+- sudo apt-get install -qq zsh mksh pdksh
+install: true
 notifications:
   irc: "chat.freenode.net#krebs_incoming"
   on_success: change
   on_failure: always
   template:
     - "painload/%{branch} %{commit} %{author}: %{message} %{build_url}"
-script: "./test"
+script:
+- bash ./test
+- dash ./test
+- ksh ./test
+- mksh ./test
+- pdksh ./test
+- zsh ./test
 branches:
     only:
         - master
