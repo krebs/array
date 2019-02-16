@@ -11,19 +11,19 @@ $ . array
 $ A=$(array ' bob' 'ross' '' 'khan')
 
 # Get the length
-$ echo "$A" | array_len
+$ printf '%s\n' "$A" | array_len
 4
 
 # Get the element at index 0
-$ echo "$A" | array_nth 0
+$ printf '%s\n' "$A" | array_nth 0
 bob%
 
 # Get the element at index 2 (= empty string)
-$ echo "$A" | array_nth 2
+$ printf '%s\n' "$A" | array_nth 2
 %
 
 # Get the element at (the invalid) index -1
-$ echo "$A" | array_nth -1
+$ printf '%s\n' "$A" | array_nth -1
 
 # The error code is set to 1
 $ echo $?
@@ -33,14 +33,14 @@ $ echo $?
 A=$(array_append "$A" 'lolwut')
 
 # Iterate over the array
-$ echo "$A" | while IFS= read element; do printf '%s, \n' "$(echo "$element" | array_element_decode)"; done
+$ printf '%s\n' "$A" | while IFS= read element; do printf '%s, \n' "$(printf '%s\n' "$element" | array_element_decode)"; done
  bob,
 ross,
 ,
 khan,
 
 # Get the index of the element khan
-$ echo "$A" | array_indexof khan
+$ printf '%s\n' "$A" | array_indexof khan
 3%
 ```
 
