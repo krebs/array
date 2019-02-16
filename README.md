@@ -1,5 +1,5 @@
 # POSIX-compliant implementation of arrays in shell
-![Travis Badge]( https://travis-ci.org/makefu/array.svg )
+![Travis Badge]( https://travis-ci.org/krebs/array.svg )
 
 # Usage
 
